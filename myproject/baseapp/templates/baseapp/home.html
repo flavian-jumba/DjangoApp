@@ -4,6 +4,8 @@
     <title>Rooms</title>
 </head>
 <body>
+
+    <a href="{% url 'create-room' %}">Create Room</a>
         <h1>List of Rooms</h1>
         {% for room in rooms %}
             <div>
