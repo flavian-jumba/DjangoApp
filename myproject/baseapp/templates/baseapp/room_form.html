@@ -1,15 +1,15 @@
-
+{% extends 'main.html' %}
 
 {% block content %}
-<div>
-
-    <form method="POST" action="">
-
-        {% csrf_token %}
-        {{ form.as_p }}
-    
-        <input type="submit" value="Submit"/>
-    </form>
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <form method="POST" action="">
+            {% csrf_token %}
+            <div class="space-y-4">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Submit</button>
+        </form>
+    </div>
 </div>
-
 {% endblock %}

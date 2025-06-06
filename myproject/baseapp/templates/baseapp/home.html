@@ -1,23 +1,40 @@
+{% extends 'main.html' %}
 
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-</head>
-<body>
-    <a href="{% url 'create-room' %}">Create Room</a>
-        <h1>List of Rooms</h1>
-        {% for room in rooms %}
-            <div>
-                <span>@{{room.host.username}}</span>
-                <h3><a href="{% url 'room' room.id %}">{{ room.name }}</a></h3>
-                <p>{{ room.description }}</p>
-                <small>{{room.topic.name}}</small>
-            </div>
-        {% endfor %}
-</body>
-</html>
+<div class="container mx-auto px-4 py-8">
+    
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-white p-4 rounded-lg shadow"> 
+            <h3 class="text-xl font-semibold mb-4">Browse Topics</h3>
+            <hr>
+            <a href="{% url 'home' %}">All</a> <br>
+            {% for topic in topics %}
+                <a href="{% url 'home' %}?q={{ topic.name }}">{{ topic.name }}</a> <br>
+            {% endfor %}
+        </div>
+        
+        <div class="md:col-span-3">
+            <a href="{% url 'create-room' %}" class="inline-block mb-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Create Room</a>
+            <h1 class="text-2xl font-bold mb-6">List of Rooms</h1>
+            
+            {% for room in rooms %}
+                <div class="bg-white p-6 rounded-lg shadow-md mb-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-gray-600">@{{room.host.username}}</span>
+                        <div>
+                            <a href="{% url 'update-room' room.id %}" class="text-blue-600 hover:text-blue-800 mr-2">Edit</a>
+                            <a href="{% url 'delete-room' room.id %}" class="text-red-600 hover:text-red-800">Delete</a>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">
+                        <a href="{% url 'room' room.id %}" class="hover:text-blue-600">{{ room.name }}</a>
+                    </h3>
+                    <p class="text-gray-700 mb-2">{{ room.description }}</p>
+                    <small class="bg-gray-200 px-2 py-1 rounded text-sm">{{room.topic.name}}</small>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}

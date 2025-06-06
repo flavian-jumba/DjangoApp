@@ -1,0 +1,18 @@
+<nav class="bg-white shadow-lg mb-8">
+    <div class="container mx-auto px-4 py-4">
+        <div class="flex items-center justify-between">
+            <a href="{% url 'home' %}" class="flex items-center">
+                <h1 class="text-2xl font-bold text-blue-600">Logo</h1>
+            </a>
+
+            <form method="GET" action="{% url 'home' %}" class="flex gap-2">
+                <input type="text" name="q" placeholder="Search Rooms..." 
+                       class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button type="submit" 
+                        class="bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700 transition-colors">
+                    Search
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
