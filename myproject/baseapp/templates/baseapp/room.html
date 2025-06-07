@@ -1,25 +1,46 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Room</title>
-</head>
-<body>
-    {% if rooms %}
-        <h1>List of Rooms</h1>
-        {% for room in rooms %}
+{% extends "main.html" %}
+{% block content %}
+
+<div class="room container">
+    <h2>{{room.name}}</h2>
+    <p>{{room.description}}</p>
+
+    <div>
+        <h3>Conversation</h3>
+        <hr>
+        {% for message in room_messages %}
             <div>
-                <h3><a href="{% url 'room' room.id %}">{{ room.name }}</a></h3>
-                <p>{{ room.description }}</p>
+                <small>@{{message.user}} {{message.created|timesince}}</small>
+                {% if request.user == message.user %}
+                    <a href="{% url 'delete-message' message.id %}">Delete</a>
+                {% endif %}
+                <p>{{message.body}}</p>
+                <hr>
             </div>
         {% endfor %}
-    {% elif room %}
-        <h1>{{ room.name }}</h1>
-        <p>{{ room.description }}</p>
-        <p>Created: {{ room.created }}</p>
-        <p>Last updated: {{ room.updated }}</p>
-        <a href="{% url 'home' %}">Back to Rooms List</a>
-    {% else %}
-        <p>Room not found.</p>
-    {% endif %}
-</body>
-</html>
+
+        {% if request.user.is_authenticated %}
+        <div>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <input type="text" name="body" placeholder="Write your message here...">
+                <br>
+                <button type="submit">Send</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>   
+
+    <div>
+        <h3>Participants</h3>
+        <hr>
+        {% for participant in room.participants.all %}
+            <div>
+                <p>@{{ participant.username }}</p>
+            </div>
+        {% empty %}
+            <p>No participants yet.</p>
+        {% endfor %}
+    </div>
+</div>    
+{% endblock %}
