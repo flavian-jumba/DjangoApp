@@ -5,6 +5,7 @@
                 <h1 class="text-2xl font-bold text-blue-600">Logo</h1>
             </a>
 
+            {% if request.user.is_authenticated %}
             <form method="GET" action="{% url 'home' %}" class="flex gap-2">
                 <input type="text" name="q" placeholder="Search Rooms..." 
                        class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -13,12 +14,22 @@
                     Search
                 </button>
             </form>
-            {% if request.user.is_authenticated %}
-            <a href="{% url 'logout' %}">Logout</a>
-            {% else %}
-            <a href="{% url 'login' %}" class="text-blue-600 hover:text-blue-700">Login</a>
             {% endif %}
 
+            <div class="flex items-center gap-4">
+                {% if request.user.is_authenticated %}
+                    <span class="text-gray-600">Welcome, {{ request.user.username }}</span>
+                    <a href="{% url 'logout' %}" 
+                       class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
+                        Logout
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" 
+                       class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        Login
+                    </a>
+                {% endif %}
+            </div>
         </div>
     </div>
 </nav>

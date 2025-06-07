@@ -10,11 +10,13 @@
     {% include 'navbar.html' %}
     
     {% if messages %}
-    <ul class="messages">
+    <div class="container mx-auto px-4 mt-4">
         {% for message in messages %}
-        <li>{{ message }}</li>
+        <div class="p-4 mb-4 rounded-lg {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
+            {{ message }}
+        </div>
         {% endfor %}
-    </ul>
+    </div>
     {% endif %}
 
     {% block content %}
