@@ -4,24 +4,32 @@ from .forms import RoomForm
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
 def loginPage(request):
+    page = 'login'
+    if request.user.is_authenticated:
+        return redirect('home')
+
     if request.method == "POST":
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        username = request.POST.get('username', '')  # Default to empty string if None
+        password = request.POST.get('password', '')  # Default to empty string if None
+
+        if username:  # Only try to lowercase if username exists
+            username = username.lower()
 
         if not username or not password:
             messages.error(request, 'Please provide both username and password')
-            return render(request, 'baseapp/login_register.html')
+            return render(request, 'baseapp/login_register.html', {'page': page})
 
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
             messages.error(request, 'User does not exist')
-            return render(request, 'baseapp/login_register.html')
+            return render(request, 'baseapp/login_register.html', {'page': page})
 
         user = authenticate(request, username=username, password=password)
         if user is not None:
@@ -30,7 +38,8 @@ def loginPage(request):
         else:
             messages.error(request, 'Invalid password')
 
-    return render(request, 'baseapp/login_register.html')
+    context = {'page': page}
+    return render(request, 'baseapp/login_register.html', context)
 
 
 def logoutUser(request):
@@ -39,12 +48,22 @@ def logoutUser(request):
 
 
 
+def registerPage(request):
+    form = UserCreationForm()
 
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.username = user.username.lower()  # Normalize username
+            user.save()
+            login(request, user)
+            return redirect('home')
+        else:
+            for error in form.errors.values():
+                messages.error(request, error[0])
 
-
-
-
-
+    return render(request, 'baseapp/login_register.html', {'form': form})
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
     roomsdata = Room.objects.filter(
@@ -59,9 +78,13 @@ def home(request):
 
 
 def room(request, pk):
-    room = Room.objects.get(id=pk)
-    context = {'room': room}
-    return render(request, 'baseapp/room.html', context)
+    try:
+        room = Room.objects.get(id=pk)
+        context = {'room': room}
+        return render(request, 'baseapp/room.html', context)
+    except Room.DoesNotExist:
+        messages.error(request, 'Room does not exist')
+        return redirect('home')
 
 @login_required(login_url='login')
 def createRoom(request):
